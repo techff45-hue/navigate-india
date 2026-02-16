@@ -1,7 +1,7 @@
-import { ndlsTrains } from "@/data/mockData";
+import { useTrainSchedules } from "@/hooks/useSupabaseData";
 import { usePersona } from "@/context/PersonaContext";
 import { cn } from "@/lib/utils";
-import { Clock, AlertTriangle } from "lucide-react";
+import { Clock, AlertTriangle, Loader2 } from "lucide-react";
 
 const statusColor: Record<string, string> = {
   "On Time": "text-transit-green",
@@ -11,8 +11,9 @@ const statusColor: Record<string, string> = {
 };
 
 const TrainDashboard = () => {
-  const { mode } = usePersona();
+  const { mode, selectedStation } = usePersona();
   const isLargeUI = mode === "accessible";
+  const { data: trains = [], isLoading } = useTrainSchedules(selectedStation || "NDLS");
 
   return (
     <div id="trains" className="space-y-3">
@@ -32,7 +33,9 @@ const TrainDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {ndlsTrains.map((train) => (
+              {isLoading ? (
+                <tr><td colSpan={4} className="text-center py-8"><Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" /></td></tr>
+              ) : trains.map((train) => (
                 <tr key={train.number} className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors">
                   <td className={cn("px-3 py-3", isLargeUI && "py-4")}>
                     <p className={cn("font-medium text-foreground", isLargeUI ? "text-base" : "text-sm")}>{train.name}</p>

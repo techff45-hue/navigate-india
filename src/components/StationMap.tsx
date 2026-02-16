@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
-import { ndlsFacilities, facilityIcons, Facility } from "@/data/mockData";
+import { facilityIcons, Facility } from "@/data/mockData";
+import { useFacilities } from "@/hooks/useSupabaseData";
 import { usePersona } from "@/context/PersonaContext";
 import { findRoute, getDirections, NavNode } from "@/lib/pathfinding";
 import FacilitySheet from "./FacilitySheet";
@@ -39,11 +40,13 @@ const StationMap = () => {
   } | null>(null);
 
   const [searchParams] = useSearchParams();
-  const { mode } = usePersona();
+  const { mode, selectedStation } = usePersona();
+  const { data: dbFacilities } = useFacilities(selectedStation || "NDLS");
   const isLargeUI = mode === "accessible";
   const filter = searchParams.get("filter");
 
-  const facilities = ndlsFacilities.filter((f) => {
+  const allFacilities = dbFacilities || [];
+  const facilities = allFacilities.filter((f) => {
     if (mode === "accessible" && !f.accessible) return false;
     if (filter === "food") return f.type === "food" || f.type === "atm";
     if (filter === "helpdesk") return f.type === "helpdesk";
