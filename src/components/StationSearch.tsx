@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Search, MapPin } from "lucide-react";
-import { stations } from "@/data/mockData";
+import { useStations } from "@/hooks/useSupabaseData";
 import { usePersona } from "@/context/PersonaContext";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +8,7 @@ const StationSearch = () => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const { setSelectedStation, mode } = usePersona();
+  const { data: stations = [] } = useStations();
 
   const filtered = useMemo(
     () =>

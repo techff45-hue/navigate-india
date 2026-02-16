@@ -1,7 +1,9 @@
 import { Facility, facilityIcons } from "@/data/mockData";
-import { X, Star, ThumbsUp } from "lucide-react";
+import { X, Star, ThumbsUp, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useSubmitReview } from "@/hooks/useSupabaseData";
+import { toast } from "sonner";
 
 interface Props {
   facility: Facility | null;
@@ -16,8 +18,27 @@ const tags = ["Clean", "Crowded", "No Water", "Well-Maintained", "Smelly", "Safe
 const FacilitySheet = ({ facility, onClose }: Props) => {
   const [rating, setRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const submitReview = useSubmitReview();
 
   if (!facility) return null;
+
+  const handleSubmit = () => {
+    if (rating === 0) {
+      toast.error("Please select a rating");
+      return;
+    }
+    submitReview.mutate(
+      { facility_id: facility.id, user_id: "anonymous", rating, tags: selectedTags },
+      {
+        onSuccess: () => {
+          toast.success("Review submitted! Thank you.");
+          setRating(0);
+          setSelectedTags([]);
+        },
+        onError: () => toast.info("Sign in to submit reviews"),
+      }
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-end justify-center" onClick={onClose}>
@@ -90,8 +111,12 @@ const FacilitySheet = ({ facility, onClose }: Props) => {
           </div>
         </div>
 
-        <button className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold min-h-[48px] hover:opacity-90 transition-opacity">
-          <ThumbsUp className="w-4 h-4" />
+        <button
+          onClick={handleSubmit}
+          disabled={submitReview.isPending}
+          className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold min-h-[48px] hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {submitReview.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ThumbsUp className="w-4 h-4" />}
           Submit Review
         </button>
       </div>
