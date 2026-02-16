@@ -14,7 +14,168 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      facilities: {
+        Row: {
+          accessible: boolean
+          created_at: string
+          crowd_level: string
+          description: string | null
+          id: string
+          lat: number
+          lng: number
+          name: string
+          station_id: string
+          type: string
+        }
+        Insert: {
+          accessible?: boolean
+          created_at?: string
+          crowd_level?: string
+          description?: string | null
+          id?: string
+          lat: number
+          lng: number
+          name: string
+          station_id: string
+          type: string
+        }
+        Update: {
+          accessible?: boolean
+          created_at?: string
+          crowd_level?: string
+          description?: string | null
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+          station_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facilities_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          facility_id: string
+          id: string
+          rating: number
+          tags: string[] | null
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          facility_id: string
+          id?: string
+          rating: number
+          tags?: string[] | null
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          facility_id?: string
+          id?: string
+          rating?: number
+          tags?: string[] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stations: {
+        Row: {
+          city: string
+          code: string
+          created_at: string
+          id: string
+          lat: number
+          lng: number
+          name: string
+        }
+        Insert: {
+          city: string
+          code: string
+          created_at?: string
+          id?: string
+          lat: number
+          lng: number
+          name: string
+        }
+        Update: {
+          city?: string
+          code?: string
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      train_schedules: {
+        Row: {
+          arrival: string | null
+          created_at: string
+          delay_minutes: number
+          departure: string | null
+          id: string
+          platform: number | null
+          station_id: string
+          status: string
+          train_name: string
+          train_no: string
+        }
+        Insert: {
+          arrival?: string | null
+          created_at?: string
+          delay_minutes?: number
+          departure?: string | null
+          id?: string
+          platform?: number | null
+          station_id: string
+          status?: string
+          train_name: string
+          train_no: string
+        }
+        Update: {
+          arrival?: string | null
+          created_at?: string
+          delay_minutes?: number
+          departure?: string | null
+          id?: string
+          platform?: number | null
+          station_id?: string
+          status?: string
+          train_name?: string
+          train_no?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "train_schedules_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
